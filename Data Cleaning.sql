@@ -52,4 +52,87 @@ from PortpolioProject01..NashvilleHousing a
 	AND a.[UniqueID ] <> b.[UniqueID ]
 where a.PropertyAddress is Null
 
+/*------------------------------------------------------------------------------------------*/
+
 -- Breaking out Address into Individual Columns (Address, City, State)
+
+select PropertyAddress
+from PortpolioProject01..NashvilleHousing
+
+-- Deletion Comma
+select 
+SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1) as Address,
+SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) +1 , LEN(PropertyAddress)) as Address
+from PortpolioProject01..NashvilleHousing
+
+-- Alter Table Add Column PropetySplitAddress
+Alter Table PortpolioProject01..NashvilleHousing
+Add PropetySplitAddress Nvarchar(255);
+
+-- Update PropetySplitAddress
+Update PortpolioProject01..NashvilleHousing
+Set PropetySplitAddress = SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1)
+
+-- Alter Table Add Column PropetySplitCity
+Alter Table PortpolioProject01..NashvilleHousing
+Add PropetySplitCity Nvarchar(255);
+
+-- Update PropetySplitCity
+Update PortpolioProject01..NashvilleHousing
+Set PropetySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) +1 , LEN(PropertyAddress));
+
+-- Select All
+select *
+from PortpolioProject01..NashvilleHousing
+
+-- Rename Table
+sp_rename 'PortpolioProject01..NashvilleHousing.PropetySplitAddress', 'PropertySplitAddress';
+
+sp_rename 'PortpolioProject01..NashvilleHousing.PropetySplitCity', 'PropertySplitCity';
+
+-- Select All
+Select *
+from PortpolioProject01..NashvilleHousing
+
+-- Select OwnerAddress
+select OwnerAddress
+from PortpolioProject01..NashvilleHousing
+
+-- Separator To Column
+select
+PARSENAME(REPLACE(OwnerAddress, ',','.'), 3),
+PARSENAME(REPLACE(OwnerAddress, ',','.'), 2),
+PARSENAME(REPLACE(OwnerAddress, ',','.'), 1)
+from PortpolioProject01..NashvilleHousing
+
+-- Alter Table Add Column OwnerSplitAddress
+Alter Table PortpolioProject01..NashvilleHousing
+Add OwnerSplitAddress Nvarchar(255);
+
+-- Update OwnerSplitAddress
+Update PortpolioProject01..NashvilleHousing
+Set OwnerSplitAddress = PARSENAME(REPLACE(OwnerAddress, ',','.'), 3)
+
+-- Alter Table Add Column OwnerSplitCity
+Alter Table PortpolioProject01..NashvilleHousing
+Add OwnerSplitCity Nvarchar(255);
+
+-- Update OwnerSplitCity
+Update PortpolioProject01..NashvilleHousing
+Set OwnerSplitCity = PARSENAME(REPLACE(OwnerAddress, ',','.'), 2)
+
+-- Alter Table Add Column OwnerSplitState
+Alter Table PortpolioProject01..NashvilleHousing
+Add OwnerSplitState Nvarchar(255);
+
+-- Update PropetySplitCity
+Update PortpolioProject01..NashvilleHousing
+Set OwnerSplitState = PARSENAME(REPLACE(OwnerAddress, ',','.'), 1)
+
+-- Select All
+select *
+from PortpolioProject01..NashvilleHousing
+
+/*------------------------------------------------------------------------------------------*/
+
+-- Change Y and N to Yes and No in "Sold as Vacant" field
