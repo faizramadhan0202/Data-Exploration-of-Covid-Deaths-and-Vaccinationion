@@ -136,3 +136,84 @@ from PortpolioProject01..NashvilleHousing
 /*------------------------------------------------------------------------------------------*/
 
 -- Change Y and N to Yes and No in "Sold as Vacant" field
+select Distinct(SoldAsVacant)
+from PortpolioProject01..NashvilleHousing
+
+-- Count SoldAsVacant
+select Distinct(SoldAsVacant), COUNT(SoldAsVacant)
+from PortpolioProject01..NashvilleHousing
+Group by SoldAsVacant
+order by 2
+
+-- Using Case When
+select SoldAsVacant,
+CASE When SoldAsVacant = 'Y' THEN 'Yes'
+	 When SoldAsVacant = 'N' THEN 'No'
+	 ELSE SoldAsVacant
+	 END
+from PortpolioProject01..NashvilleHousing
+
+-- Update SoldAsVacant 
+Update PortpolioProject01..NashvilleHousing
+SET SoldAsVacant = CASE When SoldAsVacant = 'Y' THEN 'Yes'
+	 When SoldAsVacant = 'N' THEN 'No'
+	 ELSE SoldAsVacant
+	 END
+
+/*------------------------------------------------------------------------------------------*/
+
+-- Remove Duplicate
+WITH RowNumCTE AS(
+select *,
+	ROW_NUMBER() OVER(
+	PARTITION BY ParcelID,
+				 PropertyAddress,
+				 SaleDate,
+				 LegalReference
+				 ORDER BY
+					UniqueID
+					) row_num
+
+from PortpolioProject01..NashvilleHousing
+--order by ParcelID
+)
+DELETE
+from RowNumCTE
+where row_num > 1
+--order by PropertyAddress
+
+
+--- check Duplicate
+WITH RowNumCTE AS(
+select *,
+	ROW_NUMBER() OVER(
+	PARTITION BY ParcelID,
+				 PropertyAddress,
+				 SaleDate,
+				 LegalReference
+				 ORDER BY
+					UniqueID
+					) row_num
+
+from PortpolioProject01..NashvilleHousing
+--order by ParcelID
+)
+select *
+from RowNumCTE
+where row_num > 1
+order by PropertyAddress
+
+
+/*------------------------------------------------------------------------------------------*/
+
+-- Delete Unused column
+select *
+from PortpolioProject01..NashvilleHousing
+
+ALTER TABLE PortpolioProject01..NashvilleHousing
+	DROP COLUMN OwnerAddress,
+				TaxDistrict,
+				PropertyAddress
+
+ALTER TABLE PortpolioProject01..NashvilleHousing
+	DROP COLUMN SaleDate
